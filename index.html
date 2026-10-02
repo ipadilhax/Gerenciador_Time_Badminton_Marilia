@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badminton Marília • Chaves</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="logo_transparente.png" alt="Badminton Marília" class="brand-logo">
+    <div><strong>BADMINTON MARÍLIA</strong><span>GERENCIADOR DE CAMPEONATOS</span></div>
+  </div>
+  <div class="top-actions">
+    <button class="btn btn-ghost" id="importBtn">Importar JSON</button>
+    <button class="btn btn-primary" id="exportBtn">Exportar backup JSON</button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="app-shell">
+<aside class="sidebar">
+  <p class="nav-label">GERENCIAMENTO</p>
+  <button class="nav-item active" data-view="dashboard"><span>▦</span> Visão geral</button>
+  <button class="nav-item" data-view="tournaments"><span>🏆</span> Campeonatos</button>
+  <button class="nav-item" data-view="categories"><span>▤</span> Categorias</button>
+  <button class="nav-item" data-view="athletes"><span>♟</span> Atletas</button>
+  <button class="nav-item" data-view="teams"><span>⌂</span> Equipes</button>
+  <div class="sidebar-note"><strong>Salvamento automático</strong><p>Os dados ficam no navegador. Use o backup JSON para guardar uma cópia.</p></div>
+  <div class="sidebar-footer">BADMINTON MARÍLIA • V2</div>
+</aside>
+
+<main class="main-content">
+<div id="toast" class="toast"></div>
+
+<section class="view active" id="view-dashboard">
+  <div class="page-heading"><div><p class="eyebrow">PAINEL DE CONTROLE</p><h1>Visão geral</h1><p class="muted">Organize campeonatos, atletas, equipes e chaves.</p></div><button class="btn btn-primary" id="newTournamentShortcut">＋ Novo campeonato</button></div>
+  <div class="stats-grid">
+    <article class="stat-card"><span class="stat-icon purple">🏆</span><span class="stat-label">Campeonatos</span><strong id="statTournaments">0</strong></article>
+    <article class="stat-card"><span class="stat-icon blue">▤</span><span class="stat-label">Categorias</span><strong id="statCategories">0</strong></article>
+    <article class="stat-card"><span class="stat-icon orange">♟</span><span class="stat-label">Atletas</span><strong id="statAthletes">0</strong></article>
+    <article class="stat-card"><span class="stat-icon green">⌂</span><span class="stat-label">Equipes</span><strong id="statTeams">0</strong></article>
+  </div>
+  <div class="section-heading"><div><h2>Campeonatos recentes</h2><p class="muted">Abra um campeonato para gerenciar suas categorias.</p></div><button class="btn btn-outline" data-goto="tournaments">Ver todos</button></div>
+  <div id="recentTournaments" class="tournament-list"></div>
+</section>
+
+<section class="view" id="view-tournaments">
+  <div class="page-heading"><div><p class="eyebrow">ORGANIZAÇÃO</p><h1>Campeonatos</h1><p class="muted">Cadastre os eventos e escolha as categorias participantes.</p></div><button class="btn btn-primary" id="newTournamentBtn">＋ Novo campeonato</button></div>
+  <div id="tournamentList" class="tournament-list"></div>
+</section>
+
+<section class="view" id="view-categories">
+  <div class="page-heading"><div><p class="eyebrow">MODALIDADES</p><h1>Categorias</h1><p class="muted">O gênero fica na categoria. Atletas possuem somente Masculino ou Feminino.</p></div><button class="btn btn-primary" id="newCategoryBtn">＋ Nova categoria</button></div>
+  <div class="panel"><div class="panel-head"><h2>Categorias cadastradas</h2><span class="counter" id="categoryCount">0</span></div><div id="categoryList" class="simple-list"></div></div>
+</section>
+
+<section class="view" id="view-athletes">
+  <div class="page-heading"><div><p class="eyebrow">PARTICIPANTES</p><h1>Atletas</h1><p class="muted">Atletas têm nome, equipe e gênero. Misto existe somente na categoria.</p></div><button class="btn btn-primary" id="newAthleteBtn">＋ Novo atleta</button></div>
+  <div class="toolbar"><input id="athleteSearch" class="search-input" placeholder="Buscar atleta ou equipe…"><select id="athleteGenderFilter"><option value="">Todos os gêneros</option><option>Masculino</option><option>Feminino</option></select></div>
+  <div class="panel"><div class="panel-head"><h2>Lista de atletas</h2><span class="counter" id="athleteCount">0</span></div><div id="athleteList" class="table-wrap"></div></div>
+</section>
+
+<section class="view" id="view-teams">
+  <div class="page-heading"><div><p class="eyebrow">CLUBES E CIDADES</p><h1>Equipes</h1><p class="muted">Cadastre os times aos quais os atletas pertencem.</p></div><button class="btn btn-primary" id="newTeamBtn">＋ Nova equipe</button></div>
+  <div class="panel"><div class="panel-head"><h2>Equipes cadastradas</h2><span class="counter" id="teamCount">0</span></div><div id="teamList" class="simple-list"></div></div>
+</section>
+
+<section class="view" id="view-tournament-detail">
+  <div class="page-heading">
+    <div><button class="back-link" id="backTournaments">← Campeonatos</button><p class="eyebrow">DETALHES DO CAMPEONATO</p><h1 id="detailTitle">Campeonato</h1><p class="muted" id="detailMeta"></p></div>
+    <button class="btn btn-outline" id="editTournamentDetail">Editar campeonato</button>
+  </div>
+  <div class="detail-toolbar"><div><h2>Categorias do campeonato</h2><p class="muted">Cada categoria possui seu próprio chaveamento.</p></div><button class="btn btn-primary" id="addCategoryToTournament">＋ Adicionar categoria</button></div>
+  <div id="tournamentCategories" class="category-cards"></div>
+</section>
+
+<section class="view" id="view-bracket">
+  <div class="page-heading">
+    <div><button class="back-link" id="backTournamentDetail">← Voltar ao campeonato</button><p class="eyebrow" id="bracketEyebrow">CHAVEAMENTO</p><h1 id="bracketTitle">Categoria</h1><p class="muted" id="bracketMeta"></p></div>
+    <div class="heading-actions"><button class="btn btn-outline" id="printBracketBtn">⎙ Imprimir / PDF</button><button class="btn btn-primary" id="updatePrintBtn">Imprimir chave atual</button></div>
+  </div>
+  <div id="bracketSetup" class="panel setup-panel"></div>
+  <div id="bracketWorkspace" hidden>
+    <div class="bracket-toolbar">
+      <div><span class="live-dot"></span><strong>Chave dinâmica</strong><span class="muted small">Salve o resultado e o vencedor avança automaticamente.</span></div>
+      <div class="heading-actions"><button class="btn btn-outline" id="editParticipantsBtn">Editar participantes</button><button class="btn btn-danger-outline" id="resetBracketBtn">Refazer chave</button></div>
+    </div>
+    <div id="bracketContent"></div>
+  </div>
+</section>
+</main></div>
+
+<dialog id="appDialog">
+<form method="dialog" id="dialogForm">
+  <div class="modal-head"><div><p class="eyebrow" id="modalEyebrow">CADASTRO</p><h2 id="modalTitle">Novo cadastro</h2></div><button class="icon-button" value="cancel">×</button></div>
+  <div id="modalBody" class="modal-body"></div>
+  <div class="modal-actions"><button class="btn btn-outline" value="cancel">Cancelar</button><button class="btn btn-primary" id="modalSave" value="default">Salvar</button></div>
+</form>
+</dialog>
+<script src="app.js"></script>
+</body>
+</html>
